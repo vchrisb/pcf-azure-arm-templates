@@ -65,79 +65,51 @@
   },
   "variables": {
     "api-version": "2015-06-15",
-    "boshExtraStorageAccountName": "[concat('xtrastrg',uniquestring(resourceGroup().id, deployment().name))]",
     "opsManVMName": "pcf-ops-man",
     "opsManFQDNPrefix": "[concat('pcf-opsman-',uniquestring(resourceGroup().id, deployment().name))]",
     "location": "[parameters('location')]",
     "vmStorageAccountContainerName": "vhds",
-    "storageid": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-    "xstorageid1": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('boshExtraStorageAccountName'),'1'))]",
-    "xstorageid2": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('boshExtraStorageAccountName'),'2'))]",
-    "xstorageid3": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('boshExtraStorageAccountName'),'3'))]",
-    "xstorageid4": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('boshExtraStorageAccountName'),'4'))]",
-    "xstorageid5": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('boshExtraStorageAccountName'),'5'))]",    
+    "storageid": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]", 
     "virtualNetworkName": "pcf-net",
     "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
     "addressPrefix": "10.0.0.0/16",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "subnet1Name": "pcf",
+    "subnet1Name": "opsman",
     "subnet1Prefix": "10.0.0.0/24",
     "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
-    "subnet1NSG": "opsmgr-nsg",
+    "subnet1NSG": "opsman-nsg",
+    "subnet2Name": "ert",
+    "subnet2Prefix": "10.0.1.0/24",
+    "subnet2Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
+    "subnet2NSG": "ert-nsg",
+    "subnet3Name": "service",
+    "subnet3Prefix": "10.0.2.0/24",
+    "subnet3Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
+    "subnet3NSG": "service-nsg",
+    "subnet4Name": "ondemand",
+    "subnet4Prefix": "10.0.3.0/24",
+    "subnet4Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
+    "subnet4NSG": "ondemand-nsg",
     "opsManNicName": "[variables('opsManVMName')]",
     "opsManPrivateIPAddress": "10.0.0.4",
-    "lbName": "pcf-lb",
-    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
-    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/pcf-fe-ip')]",
-    "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/pcf-vms')]",
-    "lbProbeID": "[concat(variables('lbID'),'/probes/tcp80')]"
+    "lb1Name": "pcf-lb",
+	"lb1IPName": "pcf-fe-ip",
+	"lb1PubIPName": "pcf-lb-ip",
+    "lb1ID": "[resourceId('Microsoft.Network/loadBalancers',variables('lb1Name'))]",
+    "lb1frontEndIPConfigID": "[concat(variables('lb1ID'),'/frontendIPConfigurations/', variables('lb1IPName'))]",
+	"lb1PoolName": "pcf-vms",
+    "lb1PoolID": "[concat(variables('lb1ID'),'/backendAddressPools/', variables('lb1PoolName'))]",
+    "lb1ProbeID": "[concat(variables('lb1ID'),'/probes/tcp80')]",
+    "lb2Name": "pcf-ssh-lb",
+	"lb2IPName": "pcf-ssh-fe-ip",
+	"lb2PubIPName": "pcf-ssh-lb-ip",
+    "lb2ID": "[resourceId('Microsoft.Network/loadBalancers',variables('lb2Name'))]",
+    "lb2frontEndIPConfigID": "[concat(variables('lb2ID'),'/frontendIPConfigurations/', variables('lb2IPName'))]",
+	"lb2PoolName": "diego-vms",
+    "lb2PoolID": "[concat(variables('lb2ID'),'/backendAddressPools/', variables('lb2PoolName'))]",
+    "lb2ProbeID": "[concat(variables('lb2ID'),'/probes/tcp80')]"
   },
   "resources": [
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(variables('boshExtraStorageAccountName'), '1')]",
-      "apiVersion": "[variables('api-version')]",
-      "location": "[variables('location')]",
-      "properties": {
-        "accountType": "Premium_LRS"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(variables('boshExtraStorageAccountName'), '2')]",
-      "apiVersion": "[variables('api-version')]",
-      "location": "[variables('location')]",
-      "properties": {
-        "accountType": "Premium_LRS"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(variables('boshExtraStorageAccountName'), '3')]",
-      "apiVersion": "[variables('api-version')]",
-      "location": "[variables('location')]",
-      "properties": {
-        "accountType": "Premium_LRS"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(variables('boshExtraStorageAccountName'), '4')]",
-      "apiVersion": "[variables('api-version')]",
-      "location": "[variables('location')]",
-      "properties": {
-        "accountType": "Premium_LRS"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(variables('boshExtraStorageAccountName'), '5')]",
-      "apiVersion": "[variables('api-version')]",
-      "location": "[variables('location')]",
-      "properties": {
-        "accountType": "Premium_LRS"
-      }
-    },
     {
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/publicIPAddresses",
@@ -153,7 +125,16 @@
     {
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "pcf-lb-ip",
+      "name": "[variables('lb1PubIPName')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "publicIPAllocationMethod": "static"
+      }
+    },
+    {
+      "apiVersion": "[variables('api-version')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('lb2PubIPName')]",
       "location": "[variables('location')]",
       "properties": {
         "publicIPAllocationMethod": "static"
@@ -217,8 +198,7 @@
                 "priority": 1500,
                 "direction": "Inbound"
               }
-            },
-            {
+           }, {
               "name": "allow-https",
               "properties": {
                 "protocol": "TCP",
@@ -230,8 +210,7 @@
                 "priority": 1600,
                 "direction": "Inbound"
                 }
-            },
-            {
+			}, {
               "name": "allow-diego-ssh",
               "properties": {
                 "protocol": "TCP",
@@ -248,12 +227,87 @@
       }
     },
     {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('subnet2NSG')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+            {
+              "name": "any-any",
+              "properties": {
+                "description": "Allow Inbound Any",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 1200,
+                "direction": "Inbound"
+              }
+		    }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('subnet3NSG')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+            {
+              "name": "any-any",
+              "properties": {
+                "description": "Allow Inbound Any",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 1200,
+                "direction": "Inbound"
+              }
+		    }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('subnet4NSG')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+            {
+              "name": "any-any",
+              "properties": {
+                "description": "Allow Inbound Any",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 1200,
+                "direction": "Inbound"
+              }
+		    }
+        ]
+      }
+    },
+    {
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
       "location": "[variables('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('subnet1NSG'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('subnet1NSG'))]",
+		"[concat('Microsoft.Network/networkSecurityGroups/', variables('subnet2NSG'))]",
+		"[concat('Microsoft.Network/networkSecurityGroups/', variables('subnet3NSG'))]",
+		"[concat('Microsoft.Network/networkSecurityGroups/', variables('subnet4NSG'))]"
       ],
       "properties": {
         "addressSpace": {
@@ -270,32 +324,59 @@
                   "id":"[resourceId('Microsoft.Network/networkSecurityGroups', variables('subnet1NSG'))]"
               }
             }
-          }
+          }, 
+		  {
+            "name": "[variables('subnet2Name')]",
+            "properties": {
+              "addressPrefix": "[variables('subnet2Prefix')]",
+              "networkSecurityGroup":{
+                  "id":"[resourceId('Microsoft.Network/networkSecurityGroups', variables('subnet2NSG'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('subnet3Name')]",
+            "properties": {
+              "addressPrefix": "[variables('subnet3Prefix')]",
+              "networkSecurityGroup":{
+                  "id":"[resourceId('Microsoft.Network/networkSecurityGroups', variables('subnet3NSG'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('subnet4Name')]",
+            "properties": {
+              "addressPrefix": "[variables('subnet4Prefix')]",
+              "networkSecurityGroup":{
+                  "id":"[resourceId('Microsoft.Network/networkSecurityGroups', variables('subnet4NSG'))]"
+              }
+            }
+          }    
         ]
       }
     },
     {
       "apiVersion": "2015-05-01-preview",
-      "name": "[variables('lbName')]",
+      "name": "[variables('lb1Name')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "Microsoft.Network/publicIPAddresses/pcf-lb-ip"
+		  "[concat('Microsoft.Network/publicIPAddresses/', variables('lb1PubIPName'))]"
       ],
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "pcf-fe-ip",
+            "name": "[variables('lb1IPName')]",
             "properties": {
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses','pcf-lb-ip')]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lb1PubIPName'))]"
               }
             }
           }
         ],
         "backendAddressPools": [
           {
-            "name": "pcf-vms"
+            "name": "[variables('lb1PoolName')]"
           }
         ],
         "loadBalancingRules": [
@@ -303,10 +384,10 @@
             "name": "https",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID')]"
+                "id": "[variables('lb1frontEndIPConfigID')]"
               },
               "backendAddressPool": {
-                "id": "[variables('lbPoolID')]"
+                "id": "[variables('lb1PoolID')]"
               },
               "protocol": "tcp",
               "frontendPort": 443,
@@ -314,7 +395,7 @@
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 4,
               "probe": {
-                "id": "[variables('lbProbeID')]"
+                "id": "[variables('lb1ProbeID')]"
               }
             }
           },
@@ -322,10 +403,10 @@
             "name": "http",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID')]"
+                "id": "[variables('lb1frontEndIPConfigID')]"
               },
               "backendAddressPool": {
-                "id": "[variables('lbPoolID')]"
+                "id": "[variables('lb1PoolID')]"
               },
               "protocol": "tcp",
               "frontendPort": 80,
@@ -333,18 +414,57 @@
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 4,
               "probe": {
-                "id": "[variables('lbProbeID')]"
+                "id": "[variables('lb1ProbeID')]"
               }
             }
-          },
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcp80",
+            "properties": {
+              "protocol": "tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "name": "[variables('lb2Name')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+		  "[concat('Microsoft.Network/publicIPAddresses/', variables('lb2PubIPName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('lb2IPName')]",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lb2PubIPName'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('lb2PoolName')]"
+          }
+        ],
+        "loadBalancingRules": [
           {
             "name": "diego-ssh",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID')]"
+                "id": "[variables('lb2frontEndIPConfigID')]"
               },
               "backendAddressPool": {
-                "id": "[variables('lbPoolID')]"
+                "id": "[variables('lb2PoolID')]"
               },
               "protocol": "tcp",
               "frontendPort": 2222,
@@ -352,7 +472,7 @@
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 4,
               "probe": {
-                "id": "[variables('lbProbeID')]"
+                "id": "[variables('lb2ProbeID')]"
               }
             }
           }
@@ -451,10 +571,6 @@
     "OpsMan-FQDN": {
       "type" : "string",
       "value": "[reference('opsman-ip').dnsSettings.fqdn]"
-    },
-    "Extra Storage Account Prefix": {
-      "type" : "string",
-      "value": "[variables('boshExtraStorageAccountName')]"
     }
   }
 }
