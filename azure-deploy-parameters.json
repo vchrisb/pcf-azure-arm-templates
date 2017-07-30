@@ -25,9 +25,6 @@
     },
     "adminUsername": {
       "value": "ubuntu"
-    },
-    "location": {
-      "value": "OPS-MAN-LOCATION"
     }
   }
 }
