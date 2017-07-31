@@ -61,7 +61,7 @@ az storage table create --name stemcells --connection-string $CONNECTION_STRING
 ssh-keygen -t rsa -f opsman -C ubuntu
 
 az storage blob copy start --source-uri $OPS_MAN_IMAGE_URL --connection-string $CONNECTION_STRING --destination-container opsman-image --destination-blob image.vhd 
-az storage blob show --name image.vhd --container-name opsman-image --account-name $STORAGE_NAME
+az storage blob show --name image.vhd --container-name opsman-image --account-name $STORAGE_NAME | jq .properties.copy
 ```
 
 Wait for the copy process to finish and modify `azure-deploy-parameters.json` with your specific variables.
