@@ -54,20 +54,13 @@
       "metadata": {
         "description": "secret of the client. See https://github.com/cloudfoundry-incubator/bosh-azure-cpi-release/blob/master/docs/guidance.md"
       }
-    },
-    "location": {
-      "type": "string",
-      "defaultValue": "westus",
-      "metadata": {
-        "description": "location where you want to deploy resources"
-      }
+    }
     }
   },
   "variables": {
     "api-version": "2015-06-15",
     "opsManVMName": "pcf-ops-man",
     "opsManFQDNPrefix": "[concat('pcf-opsman-',uniquestring(resourceGroup().id, deployment().name))]",
-    "location": "[parameters('location')]",
     "vmStorageAccountContainerName": "vhds",
     "storageid": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]", 
     "virtualNetworkName": "pcf-net",
@@ -114,7 +107,7 @@
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "opsman-ip",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "dynamic",
         "dnsSettings": {
@@ -126,7 +119,7 @@
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('lb1PubIPName')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "static"
       }
@@ -135,7 +128,7 @@
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('lb2PubIPName')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "static"
       }
@@ -144,7 +137,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('subnet1NSG')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
             {
@@ -230,7 +223,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('subnet2NSG')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
             {
@@ -254,7 +247,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('subnet3NSG')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
             {
@@ -278,7 +271,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('subnet4NSG')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
             {
@@ -302,7 +295,7 @@
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('subnet1NSG'))]",
 		"[concat('Microsoft.Network/networkSecurityGroups/', variables('subnet2NSG'))]",
@@ -482,7 +475,7 @@
             "name": "tcp80",
             "properties": {
               "protocol": "tcp",
-              "port": 80,
+              "port": 2222,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
             }
@@ -494,7 +487,7 @@
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('opsManNicName')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', 'opsman-ip')]",
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
@@ -521,7 +514,7 @@
       "apiversion": "[variables('api-version')]",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('opsManVMName')]",
-      "location": "[variables('location')]",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/',variables('opsManNicName'))]"
       ],
