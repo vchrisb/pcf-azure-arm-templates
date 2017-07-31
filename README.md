@@ -70,7 +70,7 @@ Wait for the copy process to finish and modify `azure-deploy-parameters.json` wi
 az group deployment create --template-file azure-deploy.json --parameters azure-deploy-parameters.json --resource-group $RESOURCE_GROUP --name cfdeploy
 ```
 
-Connect to Opsman URL which you can find under `opsMan-FQDN` in the output.
+Connect to Opsman URL which you can find under `opsMan-FQDN` in the output and continuing with deploying [Elastic Runtime on Azure](https://docs.pivotal.io/pivotalcf/customizing/azure-er-config.html)
 
 ## Objects created by template
 
