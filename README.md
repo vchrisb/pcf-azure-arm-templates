@@ -69,8 +69,24 @@ Wait for the copy process to finish and modify `azure-deploy-parameters.json` wi
 ```
 az group deployment create --template-file azure-deploy.json --parameters azure-deploy-parameters.json --resource-group $RESOURCE_GROUP --name cfdeploy
 ```
-
-Connect to Opsman URL which you can find under `opsMan-FQDN` in the output and continuing with deploying [Elastic Runtime on Azure](https://docs.pivotal.io/pivotalcf/customizing/azure-er-config.html)
+In the output look for 
+```JSON
+    "outputs": {
+      "loadbalancer-IP": {
+        "type": "String",
+        "value": "1.2.3.4"
+      },
+      "loadbalancer-SSH-IP": {
+        "type": "String",
+        "value": "1.2.3.5"
+      },
+      "opsMan-FQDN": {
+        "type": "String",
+        "value": "pcf-opsman-1234.westeurope.cloudapp.azure.com"
+      }
+```
+You need to create DNS entries for `*.<system domain>` and `*.<apps domain>`to the `loadbalancer-IP` and `ssh.<system domain>` to `loadbalancer-SSH-IP`.
+Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with deploying [Elastic Runtime on Azure](https://docs.pivotal.io/pivotalcf/customizing/azure-er-config.html)
 
 ## Objects created by template
 
