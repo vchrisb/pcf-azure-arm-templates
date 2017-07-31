@@ -4,25 +4,30 @@ This repo contains ARM templates that help operators deploy Ops Manager Director
 
 For more information, see the [Launching an Ops Manager Director Instance with an ARM Template](https://docs.pivotal.io/pivotalcf/customizing/azure-arm-template.html) topic.
 
+## requirements
+
+* [jq](https://stedolan.github.io/jq/)
+* [azure cli](https://github.com/Azure/azure-cli)
+
 ## initial setup
 ```
 az cloud set --name AzureCloud
 az login
 az account list
 
-export SUBSCRIPTION_ID="<SUBSCRIPTION ID>"
-export TENANT_ID="<TENANT ID>"
-export RESOURCE_GROUP="<RESOURCE GROUP NAME>"	# "pcf_resource_group"
-export LOCATION="<LOCATION>"                    # "westeurope"
 export CLIENT_SECRET="<SECRET>"
-export STORAGE_NAME="<STORAGE NAME>"		# "opsmanstorage"
-export OPS_MAN_IMAGE_URL="<IMAGE URL>"		# "https://opsmanagerwesteurope.blob.core.windows.net/images/ops-manager-1.11.5.vhd"
-export IDENTIFIER="<IDENTIFIER>" 	        # "12"
+export IDENTIFIER="<IDENTIFIER>"
+export SUBSCRIPTION_ID=$(az account list | jq -r ".[0].id")
+export TENANT_ID=$(az account list | jq -r ".[0].tenantId")
+export RESOURCE_GROUP="pcf_resource_group"
+export LOCATION="westeurope"
+export OPS_MAN_IMAGE_URL="https://opsmanagerwesteurope.blob.core.windows.net/images/ops-manager-1.11.5.vhd"
+export STORAGE_NAME="opsmanstorage$IDENTIFIER"
 
 az account set --subscription $SUBSCRIPTION_ID
-az ad app create --display-name "Service Principal for BOSH" --password $CLIENT_SECRET --homepage "http://BOSHAzureCPI" --identifier-uris "http://BOSHAzureCPI-$IDENTIFIER"
+az ad app create --display-name "Service Principal for BOSH" --password $CLIENT_SECRET --homepage "http://BOSHAzureCPI" --identifier-uris "http://BOSHAzureCPI$IDENTIFIER"
 
-export APP_ID="<APP ID>"
+export APP_ID=$(az ad app show --id "http://BOSHAzureCPI-$IDENTIFIER" | jq -r ".appId")
 
 az ad sp create --id $APP_ID
 az role assignment create --assignee "http://BOSHAzureCPI-$IDENTIFIER" --role "Contributor" --scope "/subscriptions/$SUBSCRIPTION_ID"
@@ -40,7 +45,7 @@ az group create --name $RESOURCE_GROUP --location $LOCATION
 ## OPSMAN
 ```
 az storage account create --name $STORAGE_NAME --resource-group $RESOURCE_GROUP --sku Standard_LRS --kind Storage --location $LOCATION
-export CONNECTION_STRING=$(az storage account show-connection-string --name $STORAGE_NAME --resource-group $RESOURCE_GROUP --output tsv)
+export CONNECTION_STRING=$(az storage account show-connection-string --name $STORAGE_NAME --resource-group $RESOURCE_GROUP | jq -r ".connectionString")
 
 az storage container create --name opsman-image --connection-string $CONNECTION_STRING
 az storage container create --name vhds --connection-string $CONNECTION_STRING
