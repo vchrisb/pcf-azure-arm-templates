@@ -10,6 +10,10 @@ For more information, see the [Launching an Ops Manager Director Instance with a
 * [azure cli](https://github.com/Azure/azure-cli)
 
 ## initial setup
+
+Modify `CLIENT_SECRET` and `IDENTIFIER` and issue the command in sequence.
+`IDENTIFIER`is used to make some of the required strings unique.
+
 ```
 az cloud set --name AzureCloud
 az login
