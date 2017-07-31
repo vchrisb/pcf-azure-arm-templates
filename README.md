@@ -34,7 +34,7 @@ az ad app create --display-name "Service Principal for BOSH" --password $CLIENT_
 export APP_ID=$(az ad app show --id "http://BOSHAzureCPI$IDENTIFIER" | jq -r ".appId")
 
 az ad sp create --id $APP_ID
-az role assignment create --assignee "http://BOSHAzureCPI-$IDENTIFIER" --role "Contributor" --scope "/subscriptions/$SUBSCRIPTION_ID"
+az role assignment create --assignee "http://BOSHAzureCPI$IDENTIFIER" --role "Contributor" --scope "/subscriptions/$SUBSCRIPTION_ID"
 az role assignment list --assignee "http://BOSHAzureCPI$IDENTIFIER"
 
 az login --username $APP_ID --password $CLIENT_SECRET --service-principal --tenant $TENANT_ID
