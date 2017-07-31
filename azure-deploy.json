@@ -10,7 +10,7 @@
     },
     "storageEndpoint": {
       "type": "string",
-      "metadata": {
+	  "metadata": {
         "description": "Domain prefix for storaged based on the chosen Azure cloud i.e. Commercial, Germany, etc."
       }
     },
@@ -54,7 +54,6 @@
       "metadata": {
         "description": "secret of the client. See https://github.com/cloudfoundry-incubator/bosh-azure-cpi-release/blob/master/docs/guidance.md"
       }
-    }
     }
   },
   "variables": {
