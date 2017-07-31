@@ -563,6 +563,14 @@
     "OpsMan-FQDN": {
       "type" : "string",
       "value": "[reference('opsman-ip').dnsSettings.fqdn]"
+    },
+    "Loadbalancer-IP": {
+      "type" : "string",
+      "value": "[reference(variables('lb1PubIPName')).ipAddress]"
+    },
+    "Loadbalancer-SSH-IP": {
+      "type" : "string",
+      "value": "[reference(variables('lb2PubIPName')).ipAddress]"
     }
   }
 }
