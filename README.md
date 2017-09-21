@@ -116,5 +116,5 @@ Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with
 ```
 az login
 az group delete --name $RESOURCE_GROUP
-az ad app delete --identifier-uris "http://BOSHAzureCPI$IDENTIFIER"
+az ad app delete --id "http://BOSHAzureCPI$IDENTIFIER"
 ```
