@@ -54,6 +54,27 @@
       "metadata": {
         "description": "secret of the client. See https://github.com/cloudfoundry-incubator/bosh-azure-cpi-release/blob/master/docs/guidance.md"
       }
+    },
+    "deploy_ssh_lb": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": ""
+      }
+    },
+    "deploy_tcp_lb": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": ""
+      }
+    },
+    "deploy_mysql_lb": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": ""
+      }
     }
   },
   "variables": {
@@ -72,34 +93,50 @@
     "subnet1NSG": "opsman-nsg",
     "subnet2Name": "ert",
     "subnet2Prefix": "10.0.1.0/24",
-    "subnet2Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
+    "subnet2Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet2Name'))]",
     "subnet2NSG": "ert-nsg",
     "subnet3Name": "service",
     "subnet3Prefix": "10.0.2.0/24",
-    "subnet3Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
+    "subnet3Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet3Name'))]",
     "subnet3NSG": "service-nsg",
     "subnet4Name": "ondemand",
     "subnet4Prefix": "10.0.3.0/24",
-    "subnet4Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
+    "subnet4Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet4Name'))]",
     "subnet4NSG": "ondemand-nsg",
     "opsManNicName": "[variables('opsManVMName')]",
     "opsManPrivateIPAddress": "10.0.0.4",
     "lb1Name": "pcf-lb",
-	"lb1IPName": "pcf-fe-ip",
-	"lb1PubIPName": "pcf-lb-ip",
+    "lb1IPName": "pcf-fe-ip",
+    "lb1PubIPName": "pcf-lb-ip",
     "lb1ID": "[resourceId('Microsoft.Network/loadBalancers',variables('lb1Name'))]",
     "lb1frontEndIPConfigID": "[concat(variables('lb1ID'),'/frontendIPConfigurations/', variables('lb1IPName'))]",
-	"lb1PoolName": "pcf-vms",
+    "lb1PoolName": "pcf-vms",
     "lb1PoolID": "[concat(variables('lb1ID'),'/backendAddressPools/', variables('lb1PoolName'))]",
     "lb1ProbeID": "[concat(variables('lb1ID'),'/probes/tcp80')]",
     "lb2Name": "pcf-ssh-lb",
-	"lb2IPName": "pcf-ssh-fe-ip",
-	"lb2PubIPName": "pcf-ssh-lb-ip",
+    "lb2IPName": "pcf-ssh-fe-ip",
+    "lb2PubIPName": "pcf-ssh-lb-ip",
     "lb2ID": "[resourceId('Microsoft.Network/loadBalancers',variables('lb2Name'))]",
     "lb2frontEndIPConfigID": "[concat(variables('lb2ID'),'/frontendIPConfigurations/', variables('lb2IPName'))]",
-	"lb2PoolName": "diego-vms",
+    "lb2PoolName": "diego-vms",
     "lb2PoolID": "[concat(variables('lb2ID'),'/backendAddressPools/', variables('lb2PoolName'))]",
-    "lb2ProbeID": "[concat(variables('lb2ID'),'/probes/tcp80')]"
+    "lb2ProbeID": "[concat(variables('lb2ID'),'/probes/tcp2222')]",
+    "lb3Name": "pcf-tcp-lb",
+    "lb3IPName": "pcf-tcp-fe-ip",
+    "lb3PubIPName": "pcf-tcp-lb-ip",
+    "lb3ID": "[resourceId('Microsoft.Network/loadBalancers',variables('lb3Name'))]",
+    "lb3frontEndIPConfigID": "[concat(variables('lb3ID'),'/frontendIPConfigurations/', variables('lb3IPName'))]",
+    "lb3PoolName": "tcp-vms",
+    "lb3PoolID": "[concat(variables('lb3ID'),'/backendAddressPools/', variables('lb3PoolName'))]",
+    "lb3ProbeID": "[concat(variables('lb3ID'),'/probes/tcp12000')]",
+    "lb4Name": "pcf-mysql-lb",
+    "lb4IPName": "pcf-mysql-fe-ip",
+    "lb4ID": "[resourceId('Microsoft.Network/loadBalancers',variables('lb4Name'))]",
+    "lb4frontEndIPConfigID": "[concat(variables('lb4ID'),'/frontendIPConfigurations/', variables('lb4IPName'))]",
+    "lb4PoolName": "mysql-vms",
+    "lb4PoolID": "[concat(variables('lb4ID'),'/backendAddressPools/', variables('lb4PoolName'))]",
+    "lb4ProbeID": "[concat(variables('lb4ID'),'/probes/tcp1936')]",
+    "lb4PrivIPAddr": "10.0.1.4"
   },
   "resources": [
     {
@@ -127,6 +164,15 @@
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('lb2PubIPName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "static"
+      }
+    },
+    {
+      "apiVersion": "[variables('api-version')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('lb3PubIPName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "static"
@@ -425,6 +471,7 @@
       }
     },
     {
+      "condition": "[parameters('deploy_ssh_lb')]",
       "apiVersion": "2015-05-01-preview",
       "name": "[variables('lb2Name')]",
       "type": "Microsoft.Network/loadBalancers",
@@ -471,10 +518,127 @@
         ],
         "probes": [
           {
-            "name": "tcp80",
+            "name": "tcp2222",
             "properties": {
               "protocol": "tcp",
               "port": 2222,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[parameters('deploy_tcp_lb')]",
+      "apiVersion": "2015-05-01-preview",
+      "name": "[variables('lb3Name')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+		  "[concat('Microsoft.Network/publicIPAddresses/', variables('lb3PubIPName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('lb3IPName')]",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lb3PubIPName'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('lb3PoolName')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "diego-tcp",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('lb3frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lb3PoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 12000,
+              "backendPort": 12000,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "probe": {
+                "id": "[variables('lb3ProbeID')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcp12000",
+            "properties": {
+              "protocol": "tcp",
+              "port": 12000,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[parameters('deploy_mysql_lb')]",
+      "apiVersion": "2015-05-01-preview",
+      "name": "[variables('lb4Name')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('lb4IPName')]",
+            "properties": {
+              "subnet": {
+                 "id": "[variables('subnet2Ref')]"
+               },
+               "privateIPAddress": "[variables('lb4PrivIPAddr')]",
+               "privateIPAllocationMethod": "Static"
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('lb4PoolName')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "diego-mysql",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('lb4frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lb4PoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 3306,
+              "backendPort": 3306,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "probe": {
+                "id": "[variables('lb4ProbeID')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcp1936",
+            "properties": {
+              "protocol": "tcp",
+              "port": 1936,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
             }

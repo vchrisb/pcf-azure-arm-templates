@@ -4,10 +4,7 @@
   "parameters": {
     "storageAccountName": {
       "value": "azureexamplescfstorage"
-    },
-    "storageEndpoint": {
-      "value": "blob.core.windows.net"
-    },
+    }
     "adminSSHKey": {
       "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7cHTTglaH0Lc77RnsZTvPIYDGXFFIMGQeCQVwC1y1s3VB9A/XdpBAtLfPRz61eXmVEM9RD4XQQ+JU2hSiB0+NkAI26j84tw5oO4oiLnRdkvTnwDpk0XOetEx7UIgRnB8j2zD4IFBO34pVCYy2hKEO+sjrRGlzMJLJRG5bGuFoJhW1Q4wo/+7iZxwYPZqLmljXfLDiESQcGrTeu85xnlo+ztjMLPe6bMigeGeUED1cTXEjpGJTWnHNXRANcpX7vQS54kOM/T3zFf+8OHi8JydpwNba5O21AG6/eLESC5VvPX20kJajFTOPAzcA8kU5e1IemlLrG3L0yh9uyzAlRS4z ubuntu"
     },
@@ -23,8 +20,20 @@
     "vmSize": {
       "value": "Standard_DS2_v2"
     },
+    "storageEndpoint": {
+      "value": "blob.core.windows.net"
+    },
     "adminUsername": {
       "value": "ubuntu"
+    },
+    "deploy_ssh_lb": {
+      "value": true
+    } ,
+    "deploy_tcp_lb": {
+      "value": true
+    },
+    "deploy_mysql_lb": {
+      "value": true
     }
   }
 }
