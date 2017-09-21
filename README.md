@@ -111,3 +111,10 @@ Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with
 
 ## Architecture
 ![azure-net-topology-base](https://docs.pivotal.io/pivotalcf/1-12/refarch/images/azure-net-topology-base.png)
+
+## delete environment
+```
+az login
+az group delete --name $RESOURCE_GROUP
+az ad app delete --identifier-uris "http://BOSHAzureCPI$IDENTIFIER"
+```
