@@ -109,4 +109,5 @@ Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with
 * `pcf-lb` for the routers
 * `pcf-ssh-lb` for SSH access to Diego Brains
 
-
+## Architecture
+![azure-net-topology-base](https://docs.pivotal.io/pivotalcf/1-12/refarch/images/azure-net-topology-base.png)
