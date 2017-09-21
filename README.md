@@ -107,7 +107,9 @@ Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with
 
 ### Load Balancer
 * `pcf-lb` for the routers
+* `pcf-tcp-lb` for the tcp routers
 * `pcf-ssh-lb` for SSH access to Diego Brains
+* `pcf-mysql-lb` for the MySQL Proxy, when using internal MySQL
 
 ## Architecture
 ![azure-net-topology-base](https://docs.pivotal.io/pivotalcf/1-12/refarch/images/azure-net-topology-base.png)
