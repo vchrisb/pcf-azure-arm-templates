@@ -120,3 +120,18 @@ az login
 az group delete --name $RESOURCE_GROUP
 az ad app delete --id "http://BOSHAzureCPI$IDENTIFIER"
 ```
+## Azure Service Broker
+
+### Register resource providers
+To be able to provison the services, they need to be registere within the subscription.  
+This can be done using `az provider register --namespace <provider>`  
+
+* Microsoft.DBforMySQL
+* Microsoft.Cache (Redis)
+* Microsoft.DocumentDB (CosmosDB)
+* Microsoft.DBforPostgreSQL
+* Microsoft.EventHub
+* Microsoft.ServiceBus
+* Microsoft.Storage
+* Microsoft.Sql
+
