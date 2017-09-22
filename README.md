@@ -85,7 +85,7 @@ In the output look for
         "value": "pcf-opsman-1234.westeurope.cloudapp.azure.com"
       }
 ```
-You need to create DNS entries for `*.<system domain>` and `*.<apps domain>`to the `loadbalancer-IP`, `ssh.<system domain>` to `loadbalancer-ssh-IP` and `tcp.<system domain>` to `loadbalancer-tcp-IP`
+You need to create DNS entries for `*.<system domain>` and `*.<apps domain>`to the `loadbalancer-IP`, `ssh.<system domain>` to `loadbalancer-ssh-IP` and `tcp.<tcp domain>` to `loadbalancer-tcp-IP`
 Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with deploying [Elastic Runtime on Azure](https://docs.pivotal.io/pivotalcf/customizing/azure-er-config.html)
 
 ## Objects created by template
