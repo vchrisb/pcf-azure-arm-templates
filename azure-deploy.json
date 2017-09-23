@@ -87,6 +87,7 @@
     "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
     "addressPrefix": "10.0.0.0/16",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "defaultNSG": "default-nsg",
     "subnet1Name": "opsman",
     "subnet1Prefix": "10.0.0.0/24",
     "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
@@ -181,6 +182,29 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('defaultNSG')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+            {
+              "name": "allow-any-any",
+              "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound"
+              }
+           }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('subnet1NSG')]",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -195,7 +219,7 @@
                 "sourceAddressPrefix": "*",
                 "destinationAddressPrefix": "[concat(variables('opsManPrivateIPAddress'), '/32')]",
                 "access": "Allow",
-                "priority": 1200,
+                "priority": 100,
                 "direction": "Inbound"
               }
             }, {
@@ -208,7 +232,7 @@
                 "sourceAddressPrefix": "*",
                 "destinationAddressPrefix": "[concat(variables('opsManPrivateIPAddress'), '/32')]",
                 "access": "Allow",
-                "priority": 1300,
+                "priority": 110,
                 "direction": "Inbound"
               }
             }, {
@@ -221,46 +245,10 @@
                 "sourceAddressPrefix": "*",
                 "destinationAddressPrefix": "[concat(variables('opsManPrivateIPAddress'), '/32')]",
                 "access": "Allow",
-                "priority": 1400,
+                "priority": 120,
                 "direction": "Inbound"
             }
-          }, {
-              "name": "allow-http",
-              "properties": {
-                "protocol": "TCP",
-                "sourcePortRange": "*",
-                "destinationPortRange": "80",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 1500,
-                "direction": "Inbound"
-              }
-           }, {
-              "name": "allow-https",
-              "properties": {
-                "protocol": "TCP",
-                "sourcePortRange": "*",
-                "destinationPortRange": "443",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 1600,
-                "direction": "Inbound"
-                }
-			}, {
-              "name": "allow-diego-ssh",
-              "properties": {
-                "protocol": "TCP",
-                "sourcePortRange": "*",
-                "destinationPortRange": "2222",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 1700,
-                "direction": "Inbound"
-                }
-            }
+          }
         ]
       }
     },
@@ -272,19 +260,54 @@
       "properties": {
         "securityRules": [
             {
-              "name": "any-any",
+              "name": "allow-http",
               "properties": {
-                "description": "Allow Inbound Any",
-                "protocol": "*",
+                "protocol": "TCP",
                 "sourcePortRange": "*",
-                "destinationPortRange": "*",
+                "destinationPortRange": "80",
                 "sourceAddressPrefix": "*",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
-                "priority": 1200,
+                "priority": 100,
                 "direction": "Inbound"
               }
-		    }
+           }, {
+              "name": "allow-https",
+              "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "443",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 110,
+                "direction": "Inbound"
+                }
+			     }, {
+              "name": "allow-diego-ssh",
+              "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "2222",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 120,
+                "direction": "Inbound"
+                }
+            }, {
+              "name": "allow-tcp",
+              "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "12000",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 130,
+                "direction": "Inbound"
+                }
+            }
         ]
       }
     },
@@ -292,49 +315,13 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('subnet3NSG')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "securityRules": [
-            {
-              "name": "any-any",
-              "properties": {
-                "description": "Allow Inbound Any",
-                "protocol": "*",
-                "sourcePortRange": "*",
-                "destinationPortRange": "*",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 1200,
-                "direction": "Inbound"
-              }
-		    }
-        ]
-      }
+      "location": "[resourceGroup().location]"
     },
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('subnet4NSG')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "securityRules": [
-            {
-              "name": "any-any",
-              "properties": {
-                "description": "Allow Inbound Any",
-                "protocol": "*",
-                "sourcePortRange": "*",
-                "destinationPortRange": "*",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 1200,
-                "direction": "Inbound"
-              }
-		    }
-        ]
-      }
+      "location": "[resourceGroup().location]"
     },
     {
       "apiVersion": "[variables('api-version')]",
