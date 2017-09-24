@@ -300,7 +300,7 @@
               "properties": {
                 "protocol": "TCP",
                 "sourcePortRange": "*",
-                "destinationPortRange": "12000",
+                "destinationPortRange": "12000-12004",
                 "sourceAddressPrefix": "*",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
@@ -543,7 +543,7 @@
         ],
         "loadBalancingRules": [
           {
-            "name": "diego-tcp",
+            "name": "diego-tcp0",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('lb3frontEndIPConfigID')]"
@@ -554,6 +554,78 @@
               "protocol": "tcp",
               "frontendPort": 12000,
               "backendPort": 12000,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "probe": {
+                "id": "[variables('lb3ProbeID')]"
+              }
+            }
+          },{
+            "name": "diego-tcp1",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('lb3frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lb3PoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 12001,
+              "backendPort": 12001,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "probe": {
+                "id": "[variables('lb3ProbeID')]"
+              }
+            }
+          },{
+            "name": "diego-tcp2",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('lb3frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lb3PoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 12002,
+              "backendPort": 12002,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "probe": {
+                "id": "[variables('lb3ProbeID')]"
+              }
+            }
+          },{
+            "name": "diego-tcp3",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('lb3frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lb3PoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 12003,
+              "backendPort": 12003,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "probe": {
+                "id": "[variables('lb3ProbeID')]"
+              }
+            }
+          },{
+            "name": "diego-tcp4",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('lb3frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lb3PoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 12004,
+              "backendPort": 12004,
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 4,
               "probe": {

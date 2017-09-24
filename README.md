@@ -102,7 +102,7 @@ Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with
 #### Security groups
 * `default-nsg` with `any-any` used for network interface level
 * `opsman-nsg` with `http`, `https` and `SSH`
-* `ert-nsg` with `https, https, 2222 (SSH) and 12000 (TCP)`
+* `ert-nsg` with `https, https, 2222 (SSH) and 12000-12004 (TCP)`
 * `service-nsg` with defaults
 * `ondemand-nsg` with defaults
 
