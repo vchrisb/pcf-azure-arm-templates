@@ -100,10 +100,11 @@ Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with
 * `ondemand` with `10.0.3.0/24`
 
 #### Security groups
+* `default-nsg` with `any-any` used for network interface level
 * `opsman-nsg` with `http`, `https` and `SSH`
-* `ert-nsg` with `any-any`
-* `service-nsg` with `any-any`
-* `ondemand-nsg` with `any-any`
+* `ert-nsg` with `https, https, 2222 (SSH) and 12000 (TCP)`
+* `service-nsg` with defaults
+* `ondemand-nsg` with defaults
 
 ### Load Balancer
 * `pcf-lb` for the routers
