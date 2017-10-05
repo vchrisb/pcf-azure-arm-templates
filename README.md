@@ -1,4 +1,4 @@
-# PCF Azure Resource Manager (ARM) Templates
+# Azure Resource Manager (ARM) Templates
 
 This repo contains ARM templates that help operators deploy Ops Manager Director for Pivotal Cloud Foundry (PCF). 
 
@@ -20,22 +20,22 @@ az login
 az account list
 
 export CLIENT_SECRET="<SECRET>"
-export IDENTIFIER="<IDENTIFIER>"
 export SUBSCRIPTION_ID=$(az account list | jq -r ".[0].id")
 export TENANT_ID=$(az account list | jq -r ".[0].tenantId")
 export RESOURCE_GROUP="pcf_resource_group"
 export LOCATION="westeurope"
 export OPS_MAN_IMAGE_URL="https://opsmanagerwesteurope.blob.core.windows.net/images/ops-manager-1.12.0.vhd"
-export STORAGE_NAME="opsmanstorage$IDENTIFIER"
+export STORAGE_NAME="opsmanstorage"
+export CLIENT_NAME="pcfserviceaccount"
 
 az account set --subscription $SUBSCRIPTION_ID
-az ad app create --display-name "Service Principal for BOSH" --password $CLIENT_SECRET --homepage "http://BOSHAzureCPI" --identifier-uris "http://BOSHAzureCPI$IDENTIFIER"
+az ad app create --display-name "Service Principal for PCF" --password $CLIENT_SECRET --homepage "http://$CLIENT_NAME" --identifier-uris "http://$CLIENT_NAME"
 
-export CLIENT_ID=$(az ad app show --id "http://BOSHAzureCPI$IDENTIFIER" | jq -r ".appId")
+export CLIENT_ID=$(az ad app show --id "http://$CLIENT_NAME" | jq -r ".appId")
 
 az ad sp create --id $CLIENT_ID
-az role assignment create --assignee "http://BOSHAzureCPI$IDENTIFIER" --role "Contributor" --scope "/subscriptions/$SUBSCRIPTION_ID"
-az role assignment list --assignee "http://BOSHAzureCPI$IDENTIFIER"
+az role assignment create --assignee "http://$CLIENT_NAME" --role "Contributor" --scope "/subscriptions/$SUBSCRIPTION_ID"
+az role assignment list --assignee "http://$CLIENT_NAME"
 
 az login --username $CLIENT_ID --password $CLIENT_SECRET --service-principal --tenant $TENANT_ID
 
@@ -119,7 +119,7 @@ Connect to Opsman URL which you can find under `opsMan-FQDN` and continuing with
 ```
 az login
 az group delete --name $RESOURCE_GROUP
-az ad app delete --id "http://BOSHAzureCPI$IDENTIFIER"
+az ad app delete --id "http://$CLIENT_NAME"
 ```
 ## Azure Service Broker
 
