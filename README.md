@@ -127,12 +127,12 @@ az ad app delete --id "http://$CLIENT_NAME"
 To be able to provison the services, they need to be registere within the subscription.  
 This can be done using `az provider register --namespace <provider>`  
 
-* Microsoft.DBforMySQL
-* Microsoft.Cache (Redis)
-* Microsoft.DocumentDB (CosmosDB)
-* Microsoft.DBforPostgreSQL
-* Microsoft.EventHub
-* Microsoft.ServiceBus
-* Microsoft.Storage
-* Microsoft.Sql
+* `Microsoft.DBforMySQL`
+* `Microsoft.Cache` (Redis)
+* `Microsoft.DocumentDB` (CosmosDB)
+* `Microsoft.DBforPostgreSQL`
+* `Microsoft.EventHub`
+* `Microsoft.ServiceBus`
+* `Microsoft.Storage`
+* `Microsoft.Sql`
 

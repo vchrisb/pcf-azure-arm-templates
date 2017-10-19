@@ -141,6 +141,7 @@
       }
     },
     {
+      "condition": "[parameters('deploy_ssh_lb')]",
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('lb2PubIPName')]",
@@ -150,6 +151,7 @@
       }
     },
     {
+      "condition": "[parameters('deploy_tcp_lb')]",
       "apiVersion": "[variables('api-version')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('lb3PubIPName')]",
