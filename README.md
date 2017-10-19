@@ -24,7 +24,7 @@ export SUBSCRIPTION_ID=$(az account list | jq -r ".[0].id")
 export TENANT_ID=$(az account list | jq -r ".[0].tenantId")
 export RESOURCE_GROUP="pcf_resource_group"
 export LOCATION="westeurope"
-export OPS_MAN_IMAGE_URL="https://opsmanagerwesteurope.blob.core.windows.net/images/ops-manager-1.12.0.vhd"
+export OPS_MAN_IMAGE_URL="https://opsmanagerwesteurope.blob.core.windows.net/images/ops-manager-1.12.2.vhd"
 export STORAGE_NAME="opsmanstorage"
 export CLIENT_NAME="pcfserviceaccount"
 
