@@ -34,27 +34,6 @@
         "description": "Public SSH key to add to admin user."
       }
     },
-    "tenantID": {
-      "type": "string",
-      "defaultValue": "TENANT-ID",
-      "metadata": {
-        "description": "ID of the tenant. See https://github.com/cloudfoundry-incubator/bosh-azure-cpi-release/blob/master/docs/guidance.md"
-      }
-    },
-    "clientID": {
-      "type": "string",
-      "defaultValue": "CLIENT-ID",
-      "metadata": {
-        "description": "ID of the client. See https://github.com/cloudfoundry-incubator/bosh-azure-cpi-release/blob/master/docs/guidance.md"
-      }
-    },
-    "clientSecret": {
-      "type": "securestring",
-      "defaultValue": "CLIENT-SECRET",
-      "metadata": {
-        "description": "secret of the client. See https://github.com/cloudfoundry-incubator/bosh-azure-cpi-release/blob/master/docs/guidance.md"
-      }
-    },
     "deploy_ssh_lb": {
       "type": "bool",
       "defaultValue": false,
