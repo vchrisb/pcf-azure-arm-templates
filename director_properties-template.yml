@@ -1,0 +1,30 @@
+{
+  "iaas_configuration": {
+    "subscription_id": "",
+    "tenant_id": "",
+    "client_id": "",
+    "resource_group_name": "",
+    "bosh_storage_account_name": "",
+    "cloud_storage_type": "managed_disks",
+    "storage_account_type": "Premium_LRS",
+    "default_security_group": "",
+    "ssh_public_key": "",
+    "ssh_private_key": "",
+    "environment": "AzureCloud"
+  },
+  "director_configuration": {
+    "ntp_servers_string": "time.nist.gov",
+    "metrics_ip": null,
+    "resurrector_enabled": true,
+    "max_threads": null,
+    "database_type": "internal",
+    "blobstore_type": "local"
+  },
+  "security_configuration": {
+    "trusted_certificates": null,
+    "generate_vm_passwords": true
+  },
+  "syslog_configuration": {
+    "enabled": false
+  }
+}

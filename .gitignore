@@ -1,2 +1,5 @@
 opsman*
 azure-deploy-parameters.json
+director_network_and_az.yml
+director_networks.yml
+director_properties.yml

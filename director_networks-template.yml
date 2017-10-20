@@ -1,0 +1,49 @@
+{
+  "icmp_checks_enabled": false,
+  "networks": [
+    {
+      "name": "",
+      "service_network": false,
+      "subnets": [{
+        "iaas_identifier": "",
+        "cidr": "",
+        "reserved_ip_ranges": "",
+        "dns": "",
+        "gateway": ""
+      }]
+    },
+    {
+      "name": "",
+      "service_network": false,
+      "subnets": [{
+        "iaas_identifier": "",
+        "cidr": "",
+        "reserved_ip_ranges": "",
+        "dns": "",
+        "gateway": ""
+      }]
+    },
+    {
+      "name": "",
+      "service_network": false,
+      "subnets": [{
+        "iaas_identifier": "",
+        "cidr": "",
+        "reserved_ip_ranges": "",
+        "dns": "",
+        "gateway": ""
+      }]
+    },
+    {
+      "name": "",
+      "service_network": false,
+      "subnets": [{
+        "iaas_identifier": "",
+        "cidr": "",
+        "reserved_ip_ranges": "",
+        "dns": "",
+        "gateway": ""
+      }]
+    }
+  ]
+}
