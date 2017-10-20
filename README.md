@@ -64,7 +64,17 @@ az storage blob copy start --source-uri $OPS_MAN_IMAGE_URL --connection-string $
 az storage blob show --name image.vhd --container-name opsman-image --account-name $STORAGE_NAME | jq .properties.copy
 ```
 
-Wait for the copy process to finish and modify `azure-deploy-parameters.json` with your specific variables.
+Wait for the copy process to finish 
+
+Create `azure-deploy-parameters.json` with your specific values:
+
+```
+cp azure-deploy-parameters.example.json azure-deploy-parameters.json
+jq --arg STORAGE_NAME $STORAGE_NAME '.parameters.storageAccountName.value = $STORAGE_NAME' azure-deploy-parameters.json > azure-deploy-parameters.json.tmp && mv azure-deploy-parameters.json.tmp azure-deploy-parameters.json
+jq --arg SSHKEY "$(cat opsman.pub)" '.parameters.adminSSHKey.value = $SSHKEY' azure-deploy-parameters.json > azure-deploy-parameters.json.tmp && mv azure-deploy-parameters.json.tmp azure-deploy-parameters.json
+```
+
+You can optionally further modify `azure-deploy-parameters.json` and `azure-deploy.json` for more customizations.
 
 ```
 az group deployment create --template-file azure-deploy.json --parameters azure-deploy-parameters.json --resource-group $RESOURCE_GROUP --name cfdeploy
