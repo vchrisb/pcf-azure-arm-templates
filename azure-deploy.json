@@ -50,7 +50,7 @@
     },
     "deploy_mysql_lb": {
       "type": "bool",
-      "defaultValue": true,
+      "defaultValue": false,
       "metadata": {
         "description": ""
       }
@@ -635,7 +635,7 @@
       "type": "Microsoft.Network/loadBalancers",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-		  "[variables('subnet2Ref')]"
+		  "[variables('vnetID')]"
       ],
       "properties": {
         "frontendIPConfigurations": [
@@ -774,10 +774,6 @@
     "Loadbalancer-IP": {
       "type" : "string",
       "value": "[reference(variables('lb1PubIPName')).ipAddress]"
-    },
-    "Loadbalancer-SSH-IP": {
-      "type" : "string",
-      "value": "[reference(variables('lb2PubIPName')).ipAddress]"
     }
   }
 }
