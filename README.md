@@ -11,8 +11,7 @@ For more information, see the [Launching an Ops Manager Director Instance with a
 
 ## initial setup
 
-Modify `CLIENT_SECRET` and `IDENTIFIER` and issue the command in sequence.
-`IDENTIFIER`is used to make some of the required strings unique and shouldn't contain any special characters.
+Modify `CLIENT_SECRET` and issue the command in sequence.
 
 ```
 az cloud set --name AzureCloud
@@ -24,7 +23,7 @@ export SUBSCRIPTION_ID=$(az account list | jq -r ".[0].id")
 export TENANT_ID=$(az account list | jq -r ".[0].tenantId")
 export RESOURCE_GROUP="pcf_resource_group"
 export LOCATION="westeurope"
-export OPS_MAN_IMAGE_URL="https://opsmanagerwesteurope.blob.core.windows.net/images/ops-manager-1.12.2.vhd"
+export OPS_MAN_IMAGE_URL="https://opsmanagerwesteurope.blob.core.windows.net/images/ops-manager-1.12.3.vhd"
 export STORAGE_NAME="opsmanstorage"
 export CLIENT_NAME="pcfserviceaccount"
 
